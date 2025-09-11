@@ -5,11 +5,110 @@ A super simple FastAPI application that allows students to view and sign up
 for extracurricular activities at Mergington High School.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
 from pathlib import Path
+import json
+import hashlib
+
+app = FastAPI(title="Mergington High School API",
+              description="API for viewing and signing up for extracurricular activities")
+
+USERS_FILE = os.path.join(Path(__file__).parent, "users.json")
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return []
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, indent=2)
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def find_user(email, users):
+    for user in users:
+        if user["email"] == email:
+            return user
+    return None
+
+# --- User Account Endpoints ---
+
+
+@app.post("/register")
+def register_user(
+    email: str = Body(...),
+    password: str = Body(...),
+    name: str = Body(...),
+    interests: str = Body("")
+):
+    users = load_users()
+    if find_user(email, users):
+        raise HTTPException(status_code=400, detail="User already exists")
+    user = {
+        "email": email,
+        "password": hash_password(password),
+        "name": name,
+        "interests": interests
+    }
+    users.append(user)
+    save_users(users)
+    return {"message": "User registered successfully"}
+
+@app.post("/login")
+def login_user(email: str = Body(...), password: str = Body(...)):
+    users = load_users()
+    user = find_user(email, users)
+    if not user or user["password"] != hash_password(password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    # For demo: return user profile (no real session/token)
+    return {
+        "message": "Login successful",
+        "profile": {
+            "email": user["email"],
+            "name": user["name"],
+            "interests": user["interests"]
+        }
+    }
+
+
+@app.get("/profile/{email}")
+def get_profile(email: str):
+    users = load_users()
+    user = find_user(email, users)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "email": user["email"],
+        "name": user["name"],
+        "interests": user["interests"]
+    }
+
+
+@app.put("/profile/{email}")
+def update_profile(email: str, name: str = Body(None), interests: str = Body(None)):
+    users = load_users()
+    user = find_user(email, users)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if name is not None:
+        user["name"] = name
+    if interests is not None:
+        user["interests"] = interests
+    save_users(users)
+    return {
+        "message": "Profile updated",
+        "profile": {
+            "email": user["email"],
+            "name": user["name"],
+            "interests": user["interests"]
+        }
+    }
 
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
