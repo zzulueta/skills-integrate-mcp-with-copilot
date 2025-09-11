@@ -29,49 +29,124 @@ header h1 {
 }
 
 main {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
+  display: block;
+  margin-bottom: 30px;
 }
 
-@media (min-width: 768px) {
-  main {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-section {
+#user-auth-container {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  margin-bottom: 30px;
   max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-section h3 {
+#activities-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
   color: #1a237e;
 }
 
+#activities-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  #activities-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .activity-card {
-  margin-bottom: 15px;
-  padding: 15px;
+  padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: #f9f9f9;
+  position: relative;
+  min-height: 280px;
 }
 
 .activity-card h4 {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   color: #0066cc;
+  font-size: 1.3em;
 }
 
 .activity-card p {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.register-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 15px;
+  float: right;
+}
+
+.register-btn:hover {
+  background-color: #218838;
+}
+
+.register-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.close-modal {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: #000;
 }
 
 /* New styles for participants section */
