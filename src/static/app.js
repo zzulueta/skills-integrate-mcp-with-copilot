@@ -38,7 +38,24 @@ document.addEventListener("DOMContentLoaded", () => {
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
-        // ...existing code for activity card...
+        
+        activityCard.innerHTML = `
+          <h4>${name}</h4>
+          <p><strong>Description:</strong> ${details.description}</p>
+          <p><strong>Schedule:</strong> ${details.schedule}</p>
+          <p><strong>Max Participants:</strong> ${details.max_participants}</p>
+          <div class="participants-container">
+            <div class="participants-section">
+              <h5>Participants (${details.participants.length}/${details.max_participants}):</h5>
+              ${details.participants.length > 0 
+                ? `<ul>${details.participants.map(email => `<li><span class="participant-email">${email}</span></li>`).join('')}</ul>`
+                : '<p>No participants yet</p>'
+              }
+            </div>
+          </div>
+        `;
+        
+        activitiesList.appendChild(activityCard);
       });
     } catch (error) {
       messageDiv.textContent = "Failed to fetch activities. Please try again.";
